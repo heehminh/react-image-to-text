@@ -1,45 +1,51 @@
 import React, { useState } from "react";
+import { createWorker } from "tesseract.js";
 
-const Image = () => {
+function Image() {
   const [image, setImage] = useState(null);
+  const [text, setText] = useState("");
 
   async function getImageFromClipboard() {
     await navigator.clipboard.readText();
-
     const clipboardItems = await navigator.clipboard.read();
     for (const item of clipboardItems) {
       for (const type of item.types) {
         if (type.startsWith("image/")) {
           const blob = await item.getType(type);
-          // 이미지 데이터가 null이 아닌 경우만 반환
           if (blob) {
             const img = document.createElement("img");
             img.src = URL.createObjectURL(blob);
-            return img;
+            setImage(img);
+
+            const worker = await createWorker({
+              logger: (m) => console.log(m),
+            });
+
+            (async () => {
+              await worker.loadLanguage("kor+eng");
+              await worker.initialize("kor+eng");
+              const {
+                data: { text },
+              } = await worker.recognize(img);
+              console.log(text);
+              setText(text);
+              await worker.terminate();
+            })();
           }
         }
       }
     }
-    // 이미지 데이터가 없는 경우, 에러 발생
-    throw new Error("No image data found in clipboard.");
   }
-
-  const handlePaste = () => {
-    getImageFromClipboard()
-      .then((img) => {
-        setImage(img);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
 
   return (
     <div>
-      <button onClick={handlePaste}>Paste Image</button>
-      {image && <img src={image.src} alt="Pasted from clipboard" />}
+      <button onClick={getImageFromClipboard}>
+        Paste Image from Clipboard
+      </button>
+      {image && <img src={image.src} alt="pasted from clipboard" />}
+      {text && <p>{text}</p>}
     </div>
   );
-};
+}
 
 export default Image;
