@@ -4,7 +4,7 @@ import { createWorker } from "tesseract.js";
 
 function Image() {
   const [image, setImage] = useState(null);
-  const [text, setText] = useState("");
+  const [text, setText] = useState("현재 클립보드에 저장된 이미지가 없습니다");
 
   async function getImageFromClipboard() {
     await navigator.clipboard.readText();
@@ -27,8 +27,9 @@ function Image() {
               await worker.initialize("kor+eng");
               const {
                 data: { text },
-              } = await worker.recognize(img);
-              console.log(text);
+              } = await worker.recognize(img, {
+                preserve_interword_spaces: "1",
+              });
               setText(text);
               await worker.terminate();
             })();
@@ -40,12 +41,16 @@ function Image() {
 
   return (
     <Wrapper>
-      <button onClick={getImageFromClipboard}>
-        Paste Image from Clipboard
-      </button>
+      <Button onClick={getImageFromClipboard}>
+        클립보드에서 이미지 불러오기
+      </Button>
       <Result>
         {image && <Img src={image.src} alt="pasted from clipboard" />}
-        {text && <Text>{text}</Text>}
+        {text && (
+          <div>
+            <Text>{text}</Text>
+          </div>
+        )}
       </Result>
     </Wrapper>
   );
@@ -56,7 +61,9 @@ export default Image;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin-bottom: 20px;
+  margin: 20px 0px;
+  min-height: 1000px;
+  align-items: center;
 `;
 
 const Result = styled.div`
@@ -74,4 +81,16 @@ const Text = styled.div`
   font-size: 24px;
   color: black;
   font-weight: 500;
+  margin-top: 10px;
+`;
+
+const Button = styled.button`
+  color: black;
+  background-color: white;
+  font-size: 32px;
+  font-weight: 500;
+  width: 500px;
+  height: 100px;
+  border-radius: 20px;
+  cursor: pointer;
 `;
