@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import styled from "styled-components";
 import { createWorker } from "tesseract.js";
 
 function Image() {
@@ -38,14 +39,39 @@ function Image() {
   }
 
   return (
-    <div>
+    <Wrapper>
       <button onClick={getImageFromClipboard}>
         Paste Image from Clipboard
       </button>
-      {image && <img src={image.src} alt="pasted from clipboard" />}
-      {text && <p>{text}</p>}
-    </div>
+      <Result>
+        {image && <Img src={image.src} alt="pasted from clipboard" />}
+        {text && <Text>{text}</Text>}
+      </Result>
+    </Wrapper>
   );
 }
 
 export default Image;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+`;
+
+const Result = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 90%;
+  padding: 20px 50px;
+`;
+
+const Img = styled.img`
+  width: 50%;
+`;
+
+const Text = styled.div`
+  font-size: 24px;
+  color: black;
+  font-weight: 500;
+`;
