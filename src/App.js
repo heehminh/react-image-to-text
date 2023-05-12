@@ -14,7 +14,7 @@ const App = () => {
           </Eng>
         </Title>
         <Description>
-          <div>Window: Ctrl + C </div>
+          <div>Window: Windows + Shift + S </div>
           <div>Mac: Cmd + Shift + 3(전체) or 4(선택)</div>
         </Description>
       </Header>
