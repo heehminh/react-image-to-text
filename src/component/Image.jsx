@@ -4,7 +4,9 @@ import { createWorker } from "tesseract.js";
 
 function Image() {
   const [image, setImage] = useState(null);
-  const [text, setText] = useState("현재 클립보드에 저장된 이미지가 없습니다");
+  const [text, setText] = useState(
+    "현재 클립보드에 저장된 이미지가 없습니다. (No images are currently stored on the clipboard)"
+  );
 
   async function getImageFromClipboard() {
     await navigator.clipboard.readText();
@@ -43,6 +45,7 @@ function Image() {
     <Wrapper>
       <Button onClick={getImageFromClipboard}>
         클립보드에서 이미지 불러오기
+        <Eng>Import images from clipboard</Eng>
       </Button>
       <Result>
         {image && <Img src={image.src} alt="pasted from clipboard" />}
@@ -61,9 +64,10 @@ export default Image;
 const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  margin: 20px 0px;
+  margin: 200px 0px;
+  width: 100%;
   min-height: 1000px;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const Result = styled.div`
@@ -75,6 +79,7 @@ const Result = styled.div`
 
 const Img = styled.img`
   width: 50%;
+  margin-right: 20px;
 `;
 
 const Text = styled.div`
@@ -86,11 +91,18 @@ const Text = styled.div`
 
 const Button = styled.button`
   color: black;
-  background-color: white;
+  background-color: lightsteelblue;
   font-size: 32px;
   font-weight: 500;
   width: 500px;
   height: 100px;
   border-radius: 20px;
+  margin: 0px 50px;
+
   cursor: pointer;
+`;
+
+const Eng = styled.div`
+  font-size: 20px;
+  color: black;
 `;
